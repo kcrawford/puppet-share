@@ -28,7 +28,7 @@ Puppet::Type.type(:osx_share).provide(:share) do
   def self.all_shares_attributes
     sharing_info = sharing("-l").gsub(/.*List of Share Points/,'').lstrip
     all_shares = {}
-    sharing_info.split(/^name:/)[1..-1].each do |share_info|
+    sharing_info.split(/^name:/)[1..-1].to_a.each do |share_info|
       share_name, config = share_info.split("\n", 2)
       share_name.gsub!(/^\t*/, '')
       path = config.lines.grep(/^path:/).first.split("\t").last.chomp
@@ -36,14 +36,14 @@ Puppet::Type.type(:osx_share).provide(:share) do
       share_attributes = {
         :name => path,
         :share_name => share_name,
+        :afp_name => protocols["afp"]["name"],
+        :smb_name => protocols["smb"]["name"],
+        :ftp_name => protocols["ftp"]["name"],
         :ensure => :present,
-        :guest => get_guest_protocols(protocols),
-        :over => get_enabled_protocols(protocols),
+        :guest_protocols => get_guest_protocols(protocols),
+        :protocols => get_enabled_protocols(protocols),
         :afp_inherit_perms => protocols["afp"]["inherit perms"] == "1"
       }
-      share_attributes[:afp_name] = protocols["afp"]["name"] if protocols["afp"]["name"] != share_name
-      share_attributes[:smb_name] = protocols["smb"]["name"] if protocols["smb"]["name"] != share_name
-      share_attributes[:ftp_name] = protocols["ftp"]["name"] if protocols["ftp"]["name"] != share_name
       all_shares[path] = share_attributes
     end
     all_shares
@@ -127,7 +127,7 @@ Puppet::Type.type(:osx_share).provide(:share) do
     return unless resource.should(:ensure) == :present
     unless @share_edit_args.empty?
       # Ensure we have an up-to-date share name before attempting to edit
-      existing_share_name = self.class.all_shares_attributes[name][:share_name]
+      existing_share_name = self.class.all_shares_attributes[name][:share_name] || File.basename(name)
       sharing(["-e", existing_share_name] + @share_edit_args)
     end
   end
@@ -150,11 +150,11 @@ Puppet::Type.type(:osx_share).provide(:share) do
     number.to_s.rjust(3, "0")
   end
 
-  def over=(desired_protocols)
+  def protocols=(desired_protocols)
     @share_edit_args += [ "-s", flags_for_protocols(desired_protocols) ]
   end
 
-  def guest=(desired_protocols)
+  def guest_protocols=(desired_protocols)
     @share_edit_args += [ "-g", flags_for_protocols(desired_protocols) ]
   end
 

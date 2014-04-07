@@ -2,6 +2,9 @@ sharing
 
 This is the sharing module.
 
+To manage all shares removing unspecified shares use:
+resources { 'osx_share': purge => true }
+
 License
 -------
 

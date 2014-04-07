@@ -3,6 +3,7 @@ require 'puppet/parameter/boolean'
 Puppet::Type.newtype(:osx_share) do
   desc "Manage OS X Shares"
 
+
   ensurable
 
   newparam(:path, :namevar => true) do
@@ -16,12 +17,12 @@ Puppet::Type.newtype(:osx_share) do
     }
   end
 
-  newproperty(:guest, :array_matching => :all) do
+  newproperty(:guest_protocols, :array_matching => :all) do
     desc "List of protocols to enable for guest"
-    defaultto []
+    defaultto([])
   end
 
-  newproperty(:over, :array_matching => :all) do
+  newproperty(:protocols, :array_matching => :all) do
     desc "List of protocols to enable for share ['afp', 'smb', 'ftp']"
     defaultto([])
   end
@@ -44,6 +45,10 @@ Puppet::Type.newtype(:osx_share) do
   newproperty(:afp_inherit_perms, :boolean => true) do
     desc "Whether to inherit permissions for afp protocol"
     defaultto false
+  end
+
+  autorequire(:file) do
+    [self[:name]]
   end
 
 end
