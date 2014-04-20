@@ -163,17 +163,17 @@ Puppet::Type.type(:osx_share).provide(:share) do
   end
 
   def afp_name=(new_name)
-    return if afp_name == share_name
+    return if new_name == @resource.should(:share_name)
     @share_edit_args += [ "-A", new_name ]
   end
 
   def smb_name=(new_name)
-    return if smb_name == share_name
+    return if new_name == @resource.should(:share_name)
     @share_edit_args += [ "-S", new_name ]
   end
 
   def ftp_name=(new_name)
-    return if ftp_name == share_name
+    return if new_name == @resource.should(:share_name)
     @share_edit_args += [ "-F", new_name ]
   end
 

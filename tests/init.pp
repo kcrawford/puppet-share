@@ -9,16 +9,31 @@
 # Learn more about module testing here:
 # http://docs.puppetlabs.com/guides/tests_smoke.html
 #
-include sharing
 
-osx_share { '/Volumes/somevol/Shares/Department' :
-  protocols         => ['afp', 'smb'],
-  name              => 'Department',
-  guest             => false,
-  afp_name          => 'Dept',
-  smb_name          => 'Dep',
-  afp_guest         => true,
-  smb_guest         => false,
-  afp_inherit_perms => false,
+resources { 'osx_share': purge => true }
+
+osx_share { '/Groups':
+  ensure                => 'present',
+  afp_name            => 'Groups',
+  ftp_name          => 'Groups',
+  guest_protocols => ['afp', 'smb'],
+  protocols     => ['afp', 'smb'],
+  share_name  => 'Groups',
+  smb_name  => 'Groups',
 }
 
+osx_share { '/Users/Shared/TestShare2':
+  ensure           => 'present',
+  afp_name       => 'TestShare Two',
+  ftp_name     => 'TestShare Dos',
+  share_name => 'TestShare2',
+  smb_name => 'TestShare 2',
+}
+
+osx_share { '/Users/Shared/TestShare':
+  ensure           => 'present',
+  afp_name       => 'TestShare One',
+  ftp_name     => 'TestShare Uno',
+  share_name => 'TestShere',
+  smb_name => 'TestShare 1',
+}
