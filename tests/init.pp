@@ -10,30 +10,26 @@
 # http://docs.puppetlabs.com/guides/tests_smoke.html
 #
 
-resources { 'osx_share': purge => true }
+resources { 'share': purge => true }
 
-osx_share { '/Groups':
-  ensure                => 'present',
-  afp_name            => 'Groups',
-  ftp_name          => 'Groups',
+share { '/Groupszz': }
+
+share { '/Groups':
   guest_protocols => ['afp', 'smb'],
-  protocols     => ['afp', 'smb'],
-  share_name  => 'Groups',
-  smb_name  => 'Groups',
+  protocols       => ['afp', 'smb'],
+  share_name      => 'Groups',
 }
-
-osx_share { '/Users/Shared/TestShare2':
-  ensure           => 'present',
-  afp_name       => 'TestShare Two',
-  ftp_name     => 'TestShare Dos',
-  share_name => 'TestShare2',
-  smb_name => 'TestShare 2',
-}
-
-osx_share { '/Users/Shared/TestShare':
-  ensure           => 'present',
-  afp_name       => 'TestShare One',
-  ftp_name     => 'TestShare Uno',
+share { '/Users/Shared/TestShare':
+  ensure     => 'present',
+  afp_name   => 'TestShare One',
+  ftp_name   => 'TestShare Uno',
   share_name => 'TestShere',
-  smb_name => 'TestShare 1',
+  smb_name   => 'TestShare 1',
+}
+share { '/Users/Shared/TestShare2':
+  ensure     => 'absent',
+  afp_name   => 'TestShare Two',
+  ftp_name   => 'TestShare Dos',
+  share_name => 'TestShare2',
+  smb_name   => 'TestShare 2',
 }

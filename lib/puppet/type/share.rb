@@ -1,10 +1,20 @@
 require 'puppet/parameter/boolean'
 
-Puppet::Type.newtype(:osx_share) do
-  desc "Manage OS X Shares"
+Puppet::Type.newtype(:share) do
+  desc "Manage File Shares"
 
+  newproperty(:ensure) do
+    desc "Typical ensure"
+    newvalue(:present) do
+      @resource.provider.create
+    end
 
-  ensurable
+    newvalue(:absent) do
+      @resource.provider.destroy
+    end
+
+    defaultto { :present }
+  end
 
   newparam(:path, :namevar => true) do
     desc "Path to share"
@@ -29,17 +39,17 @@ Puppet::Type.newtype(:osx_share) do
 
   newproperty(:afp_name) do
     desc "Specific name for afp protocol"
-    #defaultto { @resource[:share_name] }
+    defaultto { @resource[:share_name] }
   end
 
   newproperty(:smb_name) do
     desc "Specific name for smb protocol"
-    #defaultto { @resource[:share_name] }
+    defaultto { @resource[:share_name] }
   end
 
   newproperty(:ftp_name) do
     desc "Specific name for ftp protocol"
-    #defaultto { @resource[:share_name] }
+    defaultto { @resource[:share_name] }
   end
 
   newproperty(:afp_inherit_perms, :boolean => true) do
