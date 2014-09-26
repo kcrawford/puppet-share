@@ -11,6 +11,7 @@ Puppet::Type.type(:share).provide(:osx) do
   mk_resource_methods
 
   # Assigns our providers to resources
+  # We need all exiting resource values here since they are used to determine what parts of the resource need to be synced
   def self.prefetch(resources)
     instances_with_all_values.each do |provider|
       resources[provider.name].provider = provider if resources[provider.name]
@@ -20,12 +21,14 @@ Puppet::Type.type(:share).provide(:osx) do
   # Returns all instances of the resource type that are
   # discovered on the system.  The self.instances method is used by `puppet
   # resource`, and MUST be implemented for `puppet resource` to work.
+  # We don't need/want default values here since they would clutter up puppet resource output
   def self.instances
     instances_minus_default_values
   end
 
   # Used by instances which is called when running `puppet resource`
   # Removes default attributes so puppet resource output is clean and doesn't include default values
+  # TODO all_shares_attributes should return an object that can do things like remove default attributes, etc
   def self.instances_minus_default_values
     all_shares_attributes.values.map do |share_hash|
       share_hash.delete(:afp_name) if share_hash[:afp_name] == share_hash[:share_name]
@@ -68,7 +71,7 @@ Puppet::Type.type(:share).provide(:osx) do
     sharing("-a", name)
     @property_hash[:ensure] = :present
 
-    # Setters are not automatically called on create, so we call them
+    # Setters for configuring the share are not automatically called on create, so we call them
     resource.properties.each do |property|
       property.sync unless property.name == :ensure
     end
@@ -88,9 +91,9 @@ Puppet::Type.type(:share).provide(:osx) do
   # flush is called at the end of the process as a hook to save the resource changes
   # Properties will have already been set as having been synced here because setters will have already been called
   # But then how do we know if properties are in actually insync at flush time?
-  # Therein lies the problem -> according to puppet, properties are already in sync because the setter was called,
+  # Therein lies the problem -> because according to puppet, properties are already in sync because the setter was called,
   #   but they weren't actually synced because we were waiting to sync them in a batch here using flush
-  #   so that is why people track state separately from puppet's built-in when using flush
+  #   so that is why people track state separately from puppet's built-in when using flush (state is tracked using an instance variable)
   # So what we do is build up our args -- storing them in our instance variable (@share_edit_args) in each setter when the setter is called,
   #   then we use them on flush to actually save our changes
   def flush
@@ -157,6 +160,7 @@ Puppet::Type.type(:share).provide(:osx) do
 
 end
 
+# Handles parsing of a ShareConfigSnippet from the sharing command output
 class ShareConfigSnippet
   attr_reader :snippet
   def initialize(snippet)
@@ -195,6 +199,7 @@ class ShareConfigSnippet
   end
 end
 
+# Handles parsing of a ShareSnippet from the sharing command output
 class ShareSnippet
   attr_reader :snippet
   def initialize(snippet)
@@ -234,6 +239,7 @@ class ShareSnippet
 
 end
 
+# Handles parsing of sharing command output
 class SharingOutput
   attr_reader :raw_output
 

@@ -19,6 +19,7 @@ share { '/Groups':
   protocols       => ['afp', 'smb'],
   share_name      => 'Groups',
 }
+
 share { '/Users/Shared/TestShare':
   ensure     => 'present',
   afp_name   => 'TestShare One',
@@ -26,6 +27,7 @@ share { '/Users/Shared/TestShare':
   share_name => 'TestShere',
   smb_name   => 'TestShare 1',
 }
+
 share { '/Users/Shared/TestShare2':
   ensure     => 'absent',
   afp_name   => 'TestShare Two',

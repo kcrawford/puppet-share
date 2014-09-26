@@ -1,11 +1,8 @@
-name    'osx-sharing'
-version '0.1.0'
-source 'UNKNOWN'
-author 'osx'
+name    'puppet-share'
+version '1.0.0'
+source 'http://github.com/kcrawford/puppet-share'
+author 'Kyle Crawford'
 license 'Apache License, Version 2.0'
-summary 'UNKNOWN'
-description 'UNKNOWN'
-project_page 'UNKNOWN'
-
-## Add dependencies, if any:
-# dependency 'username/name', '>= 1.2.0'
+summary 'A puppet module for creating and managing file shares'
+description 'Create and manage file shares'
+project_page 'http://github.com/kcrawford/puppet-share'
