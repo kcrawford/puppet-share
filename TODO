@@ -1,0 +1,1 @@
+Fix error when path to share has a trailing slash (/) perhaps using a munge on the type param
